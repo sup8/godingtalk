@@ -21,6 +21,8 @@ const (
 type DingTalkClient struct {
 	CorpID      string
 	CorpSecret  string
+	AppKey      string
+	AppSecret   string
 	AgentID     string
 	AccessToken string
 	HTTPClient  *http.Client
@@ -105,10 +107,12 @@ func (e *JsAPITicketResponse) ExpiresIn() int {
 }
 
 //NewDingTalkClient creates a DingTalkClient instance
-func NewDingTalkClient(corpID string, corpSecret string) *DingTalkClient {
+func NewDingTalkClient(corpID string, corpSecret string, appKey string, appSecret string) *DingTalkClient {
 	c := new(DingTalkClient)
 	c.CorpID = corpID
 	c.CorpSecret = corpSecret
+	c.AppKey = appKey
+	c.AppSecret = appSecret
 	c.HTTPClient = &http.Client{
 		Timeout: 10 * time.Second,
 	}
@@ -126,8 +130,10 @@ func (c *DingTalkClient) RefreshAccessToken() error {
 	}
 
 	params := url.Values{}
-	params.Add("corpid", c.CorpID)
-	params.Add("corpsecret", c.CorpSecret)
+	//params.Add("corpid", c.CorpID)
+	//params.Add("corpsecret", c.CorpSecret)
+	params.Add("appkey", c.AppKey)
+	params.Add("appsecret", c.AppSecret)
 	err = c.httpRPC("gettoken", params, nil, &data)
 	if err == nil {
 		c.AccessToken = data.AccessToken
